@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#0EA5E9" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="LocaLore" />
+<meta name="description" content="LocaLore — Stories from where you stand. AI-narrated history, culture, biome and more for any place on Earth." />
+
+<title>LocaLore — Stories from where you stand</title>
+
+<link rel="manifest" href="manifest.json" />
+<link rel="apple-touch-icon" href="icon-180.png" />
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+<link rel="icon" type="image/svg+xml" href="icon.svg" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+<style>
+:root{
+  --sky-50:#F0F9FF;
+  --sky-100:#E0F2FE;
+  --sky-200:#BAE6FD;
+  --sky-300:#7DD3FC;
+  --sky-400:#38BDF8;
+  --sky-500:#0EA5E9;
+  --sky-600:#0284C7;
+  --sky-700:#0369A1;
+  --sky-900:#0C4A6E;
+  --sun:#FACC15;
+  --sun-deep:#EAB308;
+  --coral:#FB7185;
+  --coral-deep:#E11D48;
+  --leaf:#22C55E;
+  --cream:#FFFBEB;
+  --paper:#FFFFFF;
+  --ink:#0C4A6E;
+  --slate:#475569;
+  --slate-soft:#94A3B8;
+  --line:rgba(12,74,110,.10);
+  --shadow-sm:0 1px 2px rgba(2,132,199,.08);
+  --shadow:0 8px 24px -8px rgba(2,132,199,.25), 0 2px 6px rgba(2,132,199,.08);
+  --shadow-lg:0 24px 48px -16px rgba(2,132,199,.30), 0 4px 12px rgba(2,132,199,.10);
+  --r-sm:10px;
+  --r:16px;
+  --r-lg:22px;
+  --r-xl:28px;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0}
+html{scroll-behavior:smooth}
+
+body{
+  font-family:'Outfit',system-ui,-apple-system,sans-serif;
+  font-weight:400;
+  color:var(--ink);
+  background:
+    radial-gradient(ellipse 80% 60% at 10% 0%, #FEF3C7 0%, transparent 55%),
+    radial-gradient(ellipse 70% 50% at 90% 10%, #FECACA 0%, transparent 50%),
+    radial-gradient(ellipse 100% 80% at 50% 100%, #BAE6FD 0%, transparent 60%),
+    linear-gradient(180deg,#F0F9FF 0%, #E0F2FE 100%);
+  background-attachment:fixed;
+  min-height:100vh;
+  min-height:100dvh;
+  -webkit-tap-highlight-color:transparent;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+/* subtle grain overlay */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  opacity:.35;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.05  0 0 0 0 0.29  0 0 0 0 0.43  0 0 0 0.05 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  mix-blend-mode:multiply;
+}
+
+.app{
+  position:relative;
+  z-index:1;
+  max-width:680px;
+  margin:0 auto;
+  padding:env(safe-area-inset-top,0) 18px env(safe-area-inset-bottom,18px);
+}
+
+/* Header */
+.topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:14px 4px 8px;
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.brand-mark{
+  width:38px;height:38px;
+  border-radius:12px;
+  background:linear-gradient(140deg,var(--sky-400),var(--sky-600));
+  display:grid;place-items:center;
+  box-shadow:var(--shadow-sm);
+  color:#fff;
+}
+.brand-mark svg{width:22px;height:22px}
+.brand-name{
+  font-family:'Fraunces',serif;
+  font-weight:800;
+  font-size:24px;
+  letter-spacing:-.02em;
+  color:var(--sky-900);
+}
+.brand-name em{
+  font-style:italic;
+  color:var(--sky-600);
+}
+.icon-btn{
+  background:rgba(255,255,255,.7);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  border:1px solid var(--line);
+  width:42px;height:42px;
+  border-radius:14px;
+  display:grid;place-items:center;
+  cursor:pointer;
+  transition:transform .15s ease,background .15s ease;
+  color:var(--sky-700);
+}
+.icon-btn:hover{background:#fff;transform:translateY(-1px)}
+.icon-btn:active{transform:translateY(0) scale(.96)}
+.icon-btn svg{width:20px;height:20px}
+
+/* Hero */
+.hero{
+  padding:18px 6px 8px;
+}
+.tagline{
+  font-family:'Fraunces',serif;
+  font-weight:600;
+  font-size:34px;
+  line-height:1.05;
+  letter-spacing:-.025em;
+  color:var(--sky-900);
+  margin:0 0 10px;
+}
+.tagline em{
+  font-style:italic;
+  background:linear-gradient(120deg,var(--sun-deep),var(--coral-deep));
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+.subtitle{
+  margin:0;
+  font-size:15px;
+  color:var(--slate);
+  max-width:32ch;
+}
+
+/* Locality card */
+.locality{
+  margin-top:18px;
+  background:#fff;
+  border-radius:var(--r-lg);
+  padding:18px;
+  box-shadow:var(--shadow);
+  border:1px solid var(--line);
+  position:relative;
+  overflow:hidden;
+}
+.locality::after{
+  content:"";
+  position:absolute;
+  top:-30px;right:-30px;
+  width:120px;height:120px;
+  border-radius:50%;
+  background:radial-gradient(circle,var(--sky-100) 0%,transparent 70%);
+  pointer-events:none;
+}
+.locality-state{display:flex;align-items:center;gap:14px;position:relative}
+.pin-circle{
+  width:46px;height:46px;
+  border-radius:50%;
+  background:linear-gradient(135deg,var(--sky-400),var(--sky-600));
+  display:grid;place-items:center;
+  flex-shrink:0;
+  color:#fff;
+  box-shadow:0 4px 10px rgba(14,165,233,.35);
+}
+.pin-circle svg{width:22px;height:22px}
+.locality-text{flex:1;min-width:0}
+.locality-label{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  color:var(--slate-soft);
+  font-weight:600;
+  margin-bottom:2px;
+}
+.locality-value{
+  font-family:'Fraunces',serif;
+  font-weight:600;
+  font-size:19px;
+  color:var(--sky-900);
+  line-height:1.2;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.locality-sub{
+  font-size:13px;
+  color:var(--slate);
+  margin-top:2px;
+}
+
+.btn{
+  border:none;
+  background:var(--sky-500);
+  color:#fff;
+  font-family:'Outfit',sans-serif;
+  font-weight:600;
+  font-size:15px;
+  padding:12px 18px;
+  border-radius:var(--r);
+  cursor:pointer;
+  transition:transform .12s ease,box-shadow .15s ease,background .15s ease;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  box-shadow:0 4px 12px -2px rgba(14,165,233,.4);
+}
+.btn:hover{background:var(--sky-600);transform:translateY(-1px)}
+.btn:active{transform:translateY(0) scale(.98)}
+.btn[disabled]{opacity:.5;cursor:not-allowed;transform:none}
+.btn svg{width:18px;height:18px}
+
+.btn-ghost{
+  background:rgba(255,255,255,.85);
+  color:var(--sky-700);
+  border:1px solid var(--line);
+  box-shadow:var(--shadow-sm);
+}
+.btn-ghost:hover{background:#fff;color:var(--sky-700)}
+
+.btn-sun{background:var(--sun);color:#78350F;box-shadow:0 4px 12px -2px rgba(250,204,21,.5)}
+.btn-sun:hover{background:var(--sun-deep);color:#78350F}
+
+.btn-block{width:100%;justify-content:center}
+
+/* Category grid */
+.section-title{
+  font-family:'Fraunces',serif;
+  font-weight:600;
+  font-size:20px;
+  color:var(--sky-900);
+  margin:24px 4px 12px;
+  letter-spacing:-.01em;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.section-title .hint{
+  font-family:'Outfit',sans-serif;
+  font-weight:400;
+  font-size:12px;
+  color:var(--slate-soft);
+  letter-spacing:0;
+}
+
+.cat-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+}
+@media(min-width:520px){
+  .cat-grid{grid-template-columns:repeat(3,1fr)}
+}
+.cat{
+  position:relative;
+  background:#fff;
+  border:2px solid transparent;
+  border-radius:var(--r);
+  padding:14px 12px;
+  cursor:pointer;
+  text-align:left;
+  transition:transform .12s ease,border-color .15s ease,box-shadow .15s ease;
+  box-shadow:var(--shadow-sm);
+  display:flex;align-items:center;gap:10px;
+  font-family:'Outfit',sans-serif;
+  font-size:14px;
+  font-weight:500;
+  color:var(--ink);
+  overflow:hidden;
+}
+.cat:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.cat:active{transform:translateY(0) scale(.98)}
+.cat.active{
+  border-color:var(--sky-500);
+  background:linear-gradient(180deg,#fff,#F0F9FF);
+  box-shadow:0 8px 20px -8px rgba(14,165,233,.45);
+}
+.cat-emoji{
+  font-size:22px;
+  line-height:1;
+  width:32px;height:32px;
+  display:grid;place-items:center;
+  border-radius:10px;
+  flex-shrink:0;
+  background:var(--sky-100);
+}
+.cat-label{flex:1;line-height:1.15}
+
+/* Toggles */
+.toggles{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:14px;
+}
+.toggle{
+  background:#fff;
+  border-radius:var(--r);
+  padding:10px 12px;
+  border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;
+  box-shadow:var(--shadow-sm);
+}
+.toggle-label{
+  font-size:11px;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--slate-soft);font-weight:600;
+}
+.seg{
+  display:inline-flex;background:var(--sky-50);
+  border-radius:99px;padding:3px;
+  border:1px solid var(--line);
+}
+.seg button{
+  border:none;background:transparent;
+  font-family:'Outfit',sans-serif;
+  font-size:12px;font-weight:600;
+  color:var(--slate);
+  padding:5px 11px;
+  border-radius:99px;
+  cursor:pointer;
+  transition:all .15s ease;
+}
+.seg button.on{
+  background:var(--sky-500);color:#fff;
+  box-shadow:0 2px 6px rgba(14,165,233,.4);
+}
+
+/* Generate row */
+.generate-row{
+  margin-top:18px;
+  display:flex;gap:10px;
+}
+.generate-row .btn{flex:1;justify-content:center;padding:14px 18px;font-size:16px}
+
+/* Output card */
+.output{
+  margin-top:20px;
+  background:#fff;
+  border-radius:var(--r-xl);
+  padding:0;
+  box-shadow:var(--shadow-lg);
+  border:1px solid var(--line);
+  overflow:hidden;
+  animation:slideUp .4s cubic-bezier(.2,.8,.2,1);
+}
+@keyframes slideUp{
+  from{opacity:0;transform:translateY(16px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.output-header{
+  padding:18px 20px 12px;
+  background:linear-gradient(135deg,var(--sky-50),#fff);
+  border-bottom:1px solid var(--line);
+  position:relative;
+}
+.output-cat-tag{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:11px;text-transform:uppercase;letter-spacing:.12em;
+  color:var(--sky-700);font-weight:700;
+  background:var(--sky-100);
+  padding:4px 10px;border-radius:99px;
+  margin-bottom:8px;
+}
+.output-title{
+  font-family:'Fraunces',serif;
+  font-weight:600;
+  font-size:24px;
+  line-height:1.15;
+  letter-spacing:-.02em;
+  color:var(--sky-900);
+  margin:0;
+}
+.output-place{
+  font-size:13px;
+  color:var(--slate);
+  margin-top:4px;
+}
+.output-body{
+  padding:18px 20px 8px;
+  font-size:16px;
+  line-height:1.7;
+  color:#1E293B;
+}
+.output-body p{margin:0 0 14px}
+.output-body strong{color:var(--sky-700)}
+
+.output-actions{
+  display:flex;gap:8px;
+  padding:12px 16px 16px;
+  border-top:1px solid var(--line);
+  background:linear-gradient(180deg,#fff,#FAFCFF);
+  flex-wrap:wrap;
+}
+.action-btn{
+  flex:1;min-width:0;
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:12px;
+  padding:10px 8px;
+  font-family:'Outfit',sans-serif;
+  font-size:12px;font-weight:600;
+  color:var(--sky-700);
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:5px;
+  transition:all .15s ease;
+}
+.action-btn svg{width:14px;height:14px;flex-shrink:0}
+.action-btn:hover{background:var(--sky-50);border-color:var(--sky-300)}
+.action-btn.playing{
+  background:var(--sun);color:#78350F;border-color:var(--sun-deep);
+}
+
+/* Loading */
+.loading{
+  margin-top:20px;
+  background:#fff;
+  border-radius:var(--r-xl);
+  padding:24px;
+  box-shadow:var(--shadow);
+  border:1px solid var(--line);
+  display:flex;align-items:center;gap:14px;
+}
+.spinner{
+  width:32px;height:32px;
+  border-radius:50%;
+  border:3px solid var(--sky-100);
+  border-top-color:var(--sky-500);
+  animation:spin .8s linear infinite;
+  flex-shrink:0;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{
+  flex:1;
+  font-family:'Fraunces',serif;
+  font-size:17px;
+  color:var(--sky-900);
+  font-weight:500;
+}
+.loading-text small{
+  display:block;font-family:'Outfit',sans-serif;font-weight:400;
+  font-size:12px;color:var(--slate);margin-top:2px;
+}
+
+/* Modal */
+.modal-bg{
+  position:fixed;inset:0;
+  background:rgba(12,74,110,.4);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+  display:none;
+  align-items:flex-end;
+  justify-content:center;
+  z-index:50;
+  padding:0;
+  animation:fadeIn .2s ease;
+}
+.modal-bg.show{display:flex}
+@media(min-width:520px){
+  .modal-bg{align-items:center;padding:20px}
+}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{
+  background:#fff;
+  border-radius:24px 24px 0 0;
+  width:100%;
+  max-width:560px;
+  max-height:88vh;
+  overflow-y:auto;
+  padding:22px 22px 28px;
+  box-shadow:var(--shadow-lg);
+  animation:slideUp .3s cubic-bezier(.2,.8,.2,1);
+}
+@media(min-width:520px){
+  .modal{border-radius:24px}
+}
+.modal h2{
+  font-family:'Fraunces',serif;
+  font-weight:600;
+  font-size:24px;
+  margin:0 0 6px;
+  color:var(--sky-900);
+  letter-spacing:-.02em;
+}
+.modal h3{
+  font-family:'Fraunces',serif;
+  font-weight:600;
+  font-size:16px;
+  margin:18px 0 6px;
+  color:var(--sky-700);
+  letter-spacing:-.01em;
+}
+.modal p{
+  font-size:14px;color:var(--slate);
+  margin:0 0 14px;line-height:1.55;
+}
+.modal label{
+  display:block;font-size:12px;text-transform:uppercase;
+  letter-spacing:.12em;color:var(--slate-soft);
+  font-weight:600;margin-bottom:6px;
+}
+.modal input[type="text"],
+.modal input[type="password"]{
+  width:100%;
+  font-family:'Outfit',sans-serif;
+  font-size:15px;
+  padding:12px 14px;
+  border-radius:12px;
+  border:1.5px solid var(--line);
+  background:var(--sky-50);
+  color:var(--ink);
+  outline:none;
+  transition:border-color .15s ease,background .15s ease;
+}
+.modal input[type="text"]:focus,
+.modal input[type="password"]:focus{
+  border-color:var(--sky-500);background:#fff;
+}
+.modal-actions{
+  display:flex;gap:10px;margin-top:18px;
+}
+.modal-actions .btn{flex:1;justify-content:center}
+
+.usage-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);
+  gap:10px;margin:8px 0 6px;
+}
+.usage-card{
+  background:var(--sky-50);
+  border-radius:12px;padding:12px;
+  border:1px solid var(--line);
+}
+.usage-card .v{
+  font-family:'Fraunces',serif;
+  font-weight:600;
+  font-size:22px;
+  color:var(--sky-900);
+  letter-spacing:-.01em;
+  line-height:1.1;
+}
+.usage-card .l{
+  font-size:11px;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--slate-soft);
+  font-weight:600;margin-top:4px;
+}
+
+.danger-link{
+  background:none;border:none;
+  color:var(--coral-deep);
+  font-family:'Outfit',sans-serif;
+  font-size:13px;
+  cursor:pointer;
+  text-decoration:underline;
+  padding:4px 0;
+}
+
+/* Toast */
+.toast{
+  position:fixed;
+  bottom:24px;left:50%;
+  transform:translateX(-50%) translateY(20px);
+  background:var(--sky-900);color:#fff;
+  font-family:'Outfit',sans-serif;
+  font-size:13px;font-weight:500;
+  padding:10px 18px;border-radius:99px;
+  box-shadow:var(--shadow-lg);
+  opacity:0;
+  pointer-events:none;
+  transition:all .25s ease;
+  z-index:100;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.error-banner{
+  background:#FEF2F2;
+  border:1px solid #FECACA;
+  color:#991B1B;
+  padding:12px 14px;
+  border-radius:12px;
+  margin-top:14px;
+  font-size:14px;
+  display:flex;align-items:flex-start;gap:10px;
+}
+.error-banner svg{width:18px;height:18px;flex-shrink:0;margin-top:1px}
+
+footer{
+  text-align:center;
+  padding:30px 0 20px;
+  font-size:12px;
+  color:var(--slate-soft);
+}
+footer a{color:var(--sky-600);text-decoration:none}
+
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s7-7.5 7-13a7 7 0 1 0-14 0c0 5.5 7 13 7 13Z"/>
+          <circle cx="12" cy="9" r="2.5" fill="currentColor"/>
+        </svg>
+      </div>
+      <div class="brand-name">Loca<em>Lore</em></div>
+    </div>
+    <button class="icon-btn" id="settingsBtn" aria-label="Settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </svg>
+    </button>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <h1 class="tagline">Stories from <em>where you stand</em>.</h1>
+    <p class="subtitle">Tap a place. Pick a topic. Hear the lore.</p>
+  </section>
+
+  <!-- Locality card -->
+  <section class="locality" id="localityCard">
+    <div class="locality-state" id="localityIdle">
+      <div class="pin-circle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s7-7.5 7-13a7 7 0 1 0-14 0c0 5.5 7 13 7 13Z"/>
+          <circle cx="12" cy="9" r="2.5" fill="currentColor"/>
+        </svg>
+      </div>
+      <div class="locality-text">
+        <div class="locality-label">Where are you?</div>
+        <div class="locality-value">Find my place</div>
+        <div class="locality-sub">Uses your phone's location, briefly.</div>
+      </div>
+      <button class="btn btn-sun" id="locateBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3"/><path d="M12 19v3"/><path d="M2 12h3"/><path d="M19 12h3"/></svg>
+        Locate
+      </button>
+    </div>
+    <div class="locality-state" id="localityLoading" style="display:none">
+      <div class="spinner"></div>
+      <div class="locality-text">
+        <div class="locality-label">Locating</div>
+        <div class="locality-value">Finding you on the map…</div>
+      </div>
+    </div>
+    <div class="locality-state" id="localityFound" style="display:none">
+      <div class="pin-circle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s7-7.5 7-13a7 7 0 1 0-14 0c0 5.5 7 13 7 13Z"/>
+          <circle cx="12" cy="9" r="2.5" fill="currentColor"/>
+        </svg>
+      </div>
+      <div class="locality-text">
+        <div class="locality-label">You're in</div>
+        <div class="locality-value" id="placeName">—</div>
+        <div class="locality-sub" id="placeRegion">—</div>
+      </div>
+      <button class="icon-btn" id="changePlaceBtn" aria-label="Change place" title="Change place">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>
+      </button>
+    </div>
+  </section>
+
+  <div id="errorContainer"></div>
+
+  <!-- Categories -->
+  <h2 class="section-title">Pick a topic <span class="hint">tap one</span></h2>
+  <div class="cat-grid" id="catGrid"></div>
+
+  <!-- Toggles -->
+  <div class="toggles">
+    <div class="toggle">
+      <span class="toggle-label">Depth</span>
+      <div class="seg" role="tablist" id="depthSeg">
+        <button class="on" data-depth="quick">Quick</button>
+        <button data-depth="deep">Deep</button>
+      </div>
+    </div>
+    <div class="toggle">
+      <span class="toggle-label">Voice</span>
+      <div class="seg" role="tablist" id="voiceSeg">
+        <button class="on" data-voice="on">On</button>
+        <button data-voice="off">Off</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Generate -->
+  <div class="generate-row">
+    <button class="btn btn-block" id="generateBtn" disabled>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 5l7 7-7 7"/></svg>
+      Tell me about here
+    </button>
+  </div>
+
+  <!-- Output container -->
+  <div id="outputContainer"></div>
+
+  <footer>
+    <div>LocaLore · Stories from where you stand</div>
+    <div style="margin-top:4px">Powered by Claude · Open-Meteo · BigDataCloud</div>
+  </footer>
+
+</div>
+
+<!-- API key modal -->
+<div class="modal-bg" id="keyModal">
+  <div class="modal" role="dialog" aria-labelledby="keyModalTitle">
+    <h2 id="keyModalTitle">Welcome to LocaLore</h2>
+    <p>To generate stories about your locality, paste your Anthropic API key. It stays on this phone — never sent anywhere except Anthropic.</p>
+    <label for="apiKeyInput">Anthropic API key</label>
+    <input type="password" id="apiKeyInput" placeholder="sk-ant-…" autocomplete="off" autocapitalize="off" spellcheck="false" />
+    <p style="font-size:12px;color:var(--slate-soft);margin-top:8px">Get one at console.anthropic.com → API Keys. Tip: create a key just for this app and set a monthly spend cap.</p>
+    <div class="modal-actions">
+      <button class="btn btn-block" id="saveKeyBtn">Save & continue</button>
+    </div>
+  </div>
+</div>
+
+<!-- Settings modal -->
+<div class="modal-bg" id="settingsModal">
+  <div class="modal" role="dialog" aria-labelledby="settingsTitle">
+    <h2 id="settingsTitle">Settings</h2>
+
+    <h3>API key</h3>
+    <p style="margin-bottom:8px">Stored on this device only.</p>
+    <input type="password" id="settingsKeyInput" placeholder="sk-ant-…" autocomplete="off" autocapitalize="off" spellcheck="false" />
+
+    <h3>Model</h3>
+    <p style="margin-bottom:8px">Quick uses Haiku (cheap & fast). Deep uses Sonnet (richer narrative).</p>
+    <div class="seg" id="modelSeg" style="background:var(--sky-50);">
+      <button class="on" data-model="auto">Auto</button>
+      <button data-model="haiku">Haiku always</button>
+      <button data-model="sonnet">Sonnet always</button>
+    </div>
+
+    <h3>Voice speed</h3>
+    <input type="range" id="voiceRate" min="0.7" max="1.4" step="0.05" value="1" style="width:100%" />
+    <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--slate-soft);margin-top:-4px">
+      <span>Slower</span><span id="voiceRateValue">1.0x</span><span>Faster</span>
+    </div>
+
+    <h3>Local usage</h3>
+    <p style="margin-bottom:8px">Tracked on this device only. Verify against your Anthropic Console for the source of truth.</p>
+    <div class="usage-grid">
+      <div class="usage-card"><div class="v" id="usageCalls">0</div><div class="l">Calls</div></div>
+      <div class="usage-card"><div class="v" id="usageTokens">0</div><div class="l">Tokens</div></div>
+      <div class="usage-card"><div class="v" id="usageCost">$0.00</div><div class="l">Est. cost</div></div>
+      <div class="usage-card"><div class="v" id="usageCache">0</div><div class="l">Cache hits</div></div>
+    </div>
+    <button class="danger-link" id="resetUsageBtn">Reset local usage stats</button>
+
+    <h3>Cache</h3>
+    <p style="margin-bottom:8px"><span id="cacheCount">0</span> story / stories cached. Re-asking the same place + topic + depth costs $0.</p>
+    <button class="danger-link" id="clearCacheBtn">Clear cached stories</button>
+
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="cancelSettingsBtn">Cancel</button>
+      <button class="btn" id="saveSettingsBtn">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   LocaLore — Stories from where you stand
+   ============================================================ */
+
+const $ = sel => document.querySelector(sel);
+const $$ = sel => document.querySelectorAll(sel);
+
+/* ---------- Categories ---------- */
+const CATEGORIES = [
+  { id:'history',     label:'History',         emoji:'📜' },
+  { id:'culture',     label:'Culture',         emoji:'🎭' },
+  { id:'biome',       label:'Biome & wildlife',emoji:'🌿' },
+  { id:'see-do',      label:'See & do',        emoji:'🗺️' },
+  { id:'weather',     label:'Weather',         emoji:'⛅' },
+  { id:'cuisine',     label:'Food & drink',    emoji:'🍽️' },
+  { id:'architecture',label:'Architecture',    emoji:'🏛️' },
+  { id:'people',      label:'Notable people',  emoji:'👤' },
+  { id:'language',    label:'Language tips',   emoji:'💬' },
+  { id:'safety',      label:'Safety & customs',emoji:'🛟' }
+];
+
+/* ---------- Storage helpers ---------- */
+const KEY_API   = 'localore.apiKey';
+const KEY_USAGE = 'localore.usage';
+const KEY_PREFS = 'localore.prefs';
+const KEY_CACHE = 'localore.cache.';   // prefix per cache entry
+
+const readKey = () => localStorage.getItem(KEY_API) || '';
+const saveKey = v => localStorage.setItem(KEY_API, v.trim());
+
+function readUsage(){
+  try { return JSON.parse(localStorage.getItem(KEY_USAGE)||'{}'); }
+  catch{ return {}; }
+}
+function writeUsage(u){ localStorage.setItem(KEY_USAGE, JSON.stringify(u)); }
+
+function readPrefs(){
+  try { return JSON.parse(localStorage.getItem(KEY_PREFS)||'{}'); }
+  catch{ return {}; }
+}
+function writePrefs(p){ localStorage.setItem(KEY_PREFS, JSON.stringify(p)); }
+
+/* ---------- State ---------- */
+const state = {
+  place:null,         // {name, region, lat, lon, country}
+  category:null,
+  depth:'quick',
+  voice:'on',
+  generating:false,
+  speaking:false,
+  speechUtter:null,
+  prefs:Object.assign({modelMode:'auto', voiceRate:1.0}, readPrefs())
+};
+
+/* ---------- Pricing (per million tokens, USD) ---------- */
+const PRICING = {
+  'claude-haiku-4-5':  { in:1.00, out:5.00 },
+  'claude-sonnet-4-6': { in:3.00, out:15.00 }
+};
+
+/* ---------- Toast ---------- */
+let toastTimer;
+function toast(msg){
+  const t = $('#toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+/* ---------- Error banner ---------- */
+function showError(msg){
+  $('#errorContainer').innerHTML = `
+    <div class="error-banner">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+      <div>${msg}</div>
+    </div>`;
+}
+function clearError(){ $('#errorContainer').innerHTML = ''; }
+
+/* ---------- Build category grid ---------- */
+function renderCategories(){
+  const grid = $('#catGrid');
+  grid.innerHTML = CATEGORIES.map(c => `
+    <button class="cat" data-cat="${c.id}">
+      <span class="cat-emoji" aria-hidden="true">${c.emoji}</span>
+      <span class="cat-label">${c.label}</span>
+    </button>
+  `).join('');
+  grid.addEventListener('click', e => {
+    const btn = e.target.closest('.cat');
+    if (!btn) return;
+    $$('.cat').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    state.category = btn.dataset.cat;
+    refreshGenerateBtn();
+  });
+}
+
+/* ---------- Toggles ---------- */
+function setupToggles(){
+  $('#depthSeg').addEventListener('click', e=>{
+    const b = e.target.closest('button'); if (!b) return;
+    $('#depthSeg').querySelectorAll('button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');
+    state.depth = b.dataset.depth;
+  });
+  $('#voiceSeg').addEventListener('click', e=>{
+    const b = e.target.closest('button'); if (!b) return;
+    $('#voiceSeg').querySelectorAll('button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');
+    state.voice = b.dataset.voice;
+    if (state.voice==='off') stopSpeaking();
+  });
+}
+
+function refreshGenerateBtn(){
+  $('#generateBtn').disabled = !(state.place && state.category && !state.generating);
+}
+
+/* ---------- Geolocation + reverse geocoding ---------- */
+function locate(){
+  clearError();
+  $('#localityIdle').style.display='none';
+  $('#localityLoading').style.display='flex';
+  $('#localityFound').style.display='none';
+
+  if (!navigator.geolocation){
+    geoFail("This browser doesn't support location. Tap the refresh icon to enter a place manually.");
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(
+    async pos => {
+      const { latitude:lat, longitude:lon } = pos.coords;
+      try{
+        const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`);
+        const data = await res.json();
+        const name = data.city || data.locality || data.principalSubdivision || 'Unknown place';
+        const region = [data.principalSubdivision, data.countryName].filter(Boolean).join(', ') || '—';
+        state.place = { name, region, lat, lon, country:data.countryName||'' };
+        showFoundPlace();
+      }catch(err){
+        // even if reverse geocode fails, we have coords
+        state.place = { name:`${lat.toFixed(2)}, ${lon.toFixed(2)}`, region:'Coordinates only', lat, lon, country:'' };
+        showFoundPlace();
+      }
+    },
+    err => {
+      let msg = "Couldn't get your location.";
+      if (err.code===1) msg = "Location permission denied. Enable it in Settings or tap the refresh icon to enter a place manually.";
+      else if (err.code===3) msg = "Location request timed out. Try again, or enter a place manually.";
+      geoFail(msg);
+    },
+    { enableHighAccuracy:false, timeout:10000, maximumAge:5*60*1000 }
+  );
+}
+
+function geoFail(msg){
+  $('#localityIdle').style.display='flex';
+  $('#localityLoading').style.display='none';
+  $('#localityFound').style.display='none';
+  showError(msg + ' <button class="danger-link" onclick="manualPlace()">Enter manually</button>');
+}
+
+function showFoundPlace(){
+  $('#localityIdle').style.display='none';
+  $('#localityLoading').style.display='none';
+  $('#localityFound').style.display='flex';
+  $('#placeName').textContent = state.place.name;
+  $('#placeRegion').textContent = state.place.region;
+  refreshGenerateBtn();
+}
+
+window.manualPlace = function(){
+  const name = prompt('Enter a place (e.g. "Cape Town" or "Provence, France"):');
+  if (!name) return;
+  // We don't have coords — weather will be unavailable for manual entries unless we geocode.
+  // Try forward geocoding with Open-Meteo's free endpoint:
+  fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(name)}&count=1`)
+    .then(r=>r.json())
+    .then(data=>{
+      if (data.results && data.results[0]){
+        const r = data.results[0];
+        state.place = { name:r.name, region:[r.admin1,r.country].filter(Boolean).join(', '), lat:r.latitude, lon:r.longitude, country:r.country||'' };
+      } else {
+        state.place = { name, region:'Manual entry', lat:null, lon:null, country:'' };
+      }
+      showFoundPlace();
+      clearError();
+    })
+    .catch(()=>{
+      state.place = { name, region:'Manual entry', lat:null, lon:null, country:'' };
+      showFoundPlace();
+      clearError();
+    });
+};
+
+/* ---------- Weather (Open-Meteo, free, no key) ---------- */
+async function fetchWeather(lat, lon){
+  if (lat==null || lon==null) return null;
+  try{
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,weather_code&forecast_days=3&timezone=auto`;
+    const r = await fetch(url);
+    if (!r.ok) return null;
+    return await r.json();
+  } catch{ return null; }
+}
+
+function weatherCodeText(code){
+  // Open-Meteo WMO codes
+  const map = {
+    0:'clear sky',1:'mainly clear',2:'partly cloudy',3:'overcast',
+    45:'fog',48:'rime fog',
+    51:'light drizzle',53:'moderate drizzle',55:'dense drizzle',
+    61:'light rain',63:'moderate rain',65:'heavy rain',
+    71:'light snow',73:'moderate snow',75:'heavy snow',
+    80:'rain showers',81:'heavy rain showers',82:'violent rain showers',
+    95:'thunderstorm',96:'thunderstorm with hail',99:'severe thunderstorm with hail'
+  };
+  return map[code] || 'unknown conditions';
+}
+
+/* ---------- Prompt construction ---------- */
+function buildPrompt(category, depth, place, weatherData){
+  const isQuick = depth==='quick';
+  const wordTarget = isQuick ? '120-180 words' : '380-520 words';
+  const catLabel = CATEGORIES.find(c=>c.id===category)?.label || category;
+
+  let topicGuide = '';
+  switch(category){
+    case 'history':
+      topicGuide = 'Cover origins, key turning points, and one or two surprising events most travellers wouldn\'t know.'; break;
+    case 'culture':
+      topicGuide = 'Touch on identity, traditions, festivals, music or arts that define daily life. Avoid clichés.'; break;
+    case 'biome':
+      topicGuide = 'Describe the dominant ecosystem, signature flora and fauna, and any endemic species or conservation issues.'; break;
+    case 'see-do':
+      topicGuide = 'Recommend a mix of obvious must-sees AND a couple of off-the-beaten-track picks. Be specific with names.'; break;
+    case 'weather':
+      topicGuide = 'Describe the climate pattern across the year, current conditions, and what to pack right now.'; break;
+    case 'cuisine':
+      topicGuide = 'Describe signature dishes, drinks, and food culture. Recommend one or two specific places or dish names.'; break;
+    case 'architecture':
+      topicGuide = 'Cover dominant architectural styles, signature landmarks, and any historical context for the built environment.'; break;
+    case 'people':
+      topicGuide = 'Mention 3-5 notable people from this place across history — writers, scientists, artists, leaders. One sentence each on why they matter.'; break;
+    case 'language':
+      topicGuide = 'Note the local language(s) and dialects. Give 5-7 useful phrases (greetings, please, thank you, excuse me, how much) with phonetic guides.'; break;
+    case 'safety':
+      topicGuide = 'Cover real safety considerations honestly (without alarmism), local etiquette do\'s and don\'ts, and tipping/bargaining norms.'; break;
+  }
+
+  let weatherBlock = '';
+  if (category==='weather' && weatherData?.current){
+    const c = weatherData.current;
+    const d = weatherData.daily;
+    weatherBlock = `\n\nLIVE WEATHER DATA (use this verbatim, don't make it up):
+- Right now: ${c.temperature_2m}°C, feels like ${c.apparent_temperature}°C, ${weatherCodeText(c.weather_code)}, humidity ${c.relative_humidity_2m}%, wind ${c.wind_speed_10m} km/h, ${c.is_day?'daytime':'night'}.
+- 3-day outlook: ${d.time.map((t,i)=>`${t}: ${d.temperature_2m_min[i]}°/${d.temperature_2m_max[i]}°C, ${weatherCodeText(d.weather_code[i])}`).join('; ')}.`;
+  }
+
+  const placeLine = state.place.region ? `${place.name} (${place.region})` : place.name;
+
+  const prompt = `You are LocaLore, a knowledgeable, warm, well-travelled local guide. Write a ${wordTarget} ${isQuick?'snapshot':'deep dive'} on the ${catLabel.toLowerCase()} of ${placeLine}.
+
+${topicGuide}
+
+Style:
+- Conversational, vivid, second-person where natural ("you'll notice…").
+- Tight prose, no headings, no bullet lists, no markdown — this will be read aloud.
+- Open with a strong, specific hook (not "Welcome to…" or "Did you know…").
+- End with one memorable detail or recommendation.
+- Be honest about uncertainty rather than inventing facts. If you genuinely don't know specific details about this exact place, talk about the broader region honestly.${weatherBlock}
+
+Write the piece now. Just the piece — no preamble, no sign-off.`;
+
+  return prompt;
+}
+
+/* ---------- Cache ---------- */
+function cacheKey(place, cat, depth){
+  // Round coords for cache hits within ~1km
+  const lat = place.lat!=null ? place.lat.toFixed(2) : 'na';
+  const lon = place.lon!=null ? place.lon.toFixed(2) : 'na';
+  return `${KEY_CACHE}${lat},${lon},${cat},${depth}`;
+}
+function readCache(k){
+  try { return JSON.parse(localStorage.getItem(k) || 'null'); }
+  catch { return null; }
+}
+function writeCache(k, v){
+  try { localStorage.setItem(k, JSON.stringify(v)); }
+  catch(e){ /* quota */ }
+}
+function cacheCount(){
+  let n=0;
+  for (let i=0;i<localStorage.length;i++){
+    if (localStorage.key(i).startsWith(KEY_CACHE)) n++;
+  }
+  return n;
+}
+function clearCache(){
+  const keys=[];
+  for (let i=0;i<localStorage.length;i++){
+    const k=localStorage.key(i);
+    if (k.startsWith(KEY_CACHE)) keys.push(k);
+  }
+  keys.forEach(k=>localStorage.removeItem(k));
+}
+
+/* ---------- Usage tracking ---------- */
+function recordUsage({model, inputTokens, outputTokens, cached}){
+  const u = readUsage();
+  u.calls = (u.calls||0) + 1;
+  u.inputTokens  = (u.inputTokens ||0) + (inputTokens||0);
+  u.outputTokens = (u.outputTokens||0) + (outputTokens||0);
+  u.cacheHits    = (u.cacheHits   ||0) + (cached?1:0);
+  // cost
+  const p = PRICING[model] || {in:0,out:0};
+  const cost = ((inputTokens||0)*p.in + (outputTokens||0)*p.out) / 1e6;
+  u.cost = (u.cost||0) + cost;
+  writeUsage(u);
+}
+function refreshUsageDisplay(){
+  const u = readUsage();
+  $('#usageCalls').textContent  = (u.calls||0).toLocaleString();
+  $('#usageTokens').textContent = ((u.inputTokens||0)+(u.outputTokens||0)).toLocaleString();
+  $('#usageCost').textContent   = '$'+(u.cost||0).toFixed(4);
+  $('#usageCache').textContent  = (u.cacheHits||0).toLocaleString();
+  $('#cacheCount').textContent  = cacheCount();
+}
+
+/* ---------- Anthropic API call ---------- */
+async function callClaude(prompt, depth){
+  const apiKey = readKey();
+  if (!apiKey) throw new Error('No API key set. Open settings to add one.');
+
+  const modelMode = state.prefs.modelMode || 'auto';
+  let model;
+  if (modelMode === 'haiku') model = 'claude-haiku-4-5';
+  else if (modelMode === 'sonnet') model = 'claude-sonnet-4-6';
+  else model = depth === 'deep' ? 'claude-sonnet-4-6' : 'claude-haiku-4-5';
+
+  const maxTokens = depth==='deep' ? 1200 : 500;
+
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method:'POST',
+    headers:{
+      'content-type':'application/json',
+      'x-api-key':apiKey,
+      'anthropic-version':'2023-06-01',
+      'anthropic-dangerous-direct-browser-access':'true'
+    },
+    body: JSON.stringify({
+      model,
+      max_tokens: maxTokens,
+      messages:[ { role:'user', content: prompt } ]
+    })
+  });
+
+  if (!res.ok){
+    let msg = `API error (${res.status})`;
+    try{
+      const e = await res.json();
+      if (e?.error?.message) msg = e.error.message;
+      if (res.status===401) msg = 'Invalid API key. Open settings to update it.';
+      if (res.status===429) msg = 'Rate limited or out of credit. Check your Anthropic Console.';
+    }catch{}
+    throw new Error(msg);
+  }
+
+  const data = await res.json();
+  const text = (data.content||[])
+    .filter(b => b.type === 'text')
+    .map(b => b.text)
+    .join('\n')
+    .trim();
+
+  return {
+    text,
+    model,
+    inputTokens:  data.usage?.input_tokens  || 0,
+    outputTokens: data.usage?.output_tokens || 0
+  };
+}
+
+/* ---------- Generate flow ---------- */
+async function generate(){
+  if (!state.place || !state.category) return;
+  if (state.generating) return;
+
+  state.generating = true;
+  refreshGenerateBtn();
+  clearError();
+  stopSpeaking();
+
+  const cat = state.category;
+  const depth = state.depth;
+  const place = state.place;
+  const ck = cacheKey(place, cat, depth);
+
+  // Try cache
+  const cached = readCache(ck);
+  if (cached){
+    showOutput(cached.text, cat, place, /*fromCache*/ true);
+    recordUsage({ model:cached.model, inputTokens:0, outputTokens:0, cached:true });
+    refreshUsageDisplay();
+    state.generating = false;
+    refreshGenerateBtn();
+    if (state.voice==='on') speak(cached.text);
+    return;
+  }
+
+  // Show loading
+  $('#outputContainer').innerHTML = `
+    <div class="loading">
+      <div class="spinner"></div>
+      <div class="loading-text">
+        Composing your story…
+        <small>${CATEGORIES.find(c=>c.id===cat).label} of ${place.name} · ${depth==='quick'?'quick read':'deep dive'}</small>
+      </div>
+    </div>`;
+
+  try{
+    let weatherData = null;
+    if (cat === 'weather' && place.lat!=null) {
+      weatherData = await fetchWeather(place.lat, place.lon);
+    }
+    const prompt = buildPrompt(cat, depth, place, weatherData);
+    const result = await callClaude(prompt, depth);
+
+    writeCache(ck, { text:result.text, model:result.model, when:Date.now() });
+    recordUsage({ model:result.model, inputTokens:result.inputTokens, outputTokens:result.outputTokens, cached:false });
+    refreshUsageDisplay();
+
+    showOutput(result.text, cat, place, false);
+    if (state.voice==='on') speak(result.text);
+  } catch(err){
+    $('#outputContainer').innerHTML = '';
+    showError(err.message || 'Something went wrong. Try again.');
+  } finally {
+    state.generating = false;
+    refreshGenerateBtn();
+  }
+}
+
+/* ---------- Output rendering ---------- */
+function showOutput(text, cat, place, fromCache){
+  const c = CATEGORIES.find(x=>x.id===cat);
+  const paragraphs = text.split(/\n\n+/).map(p => `<p>${escapeHtml(p)}</p>`).join('');
+  $('#outputContainer').innerHTML = `
+    <article class="output">
+      <header class="output-header">
+        <span class="output-cat-tag">${c.emoji} ${c.label}${fromCache?' · cached':''}</span>
+        <h2 class="output-title">${escapeHtml(place.name)}</h2>
+        <div class="output-place">${escapeHtml(place.region||'')}</div>
+      </header>
+      <div class="output-body">${paragraphs}</div>
+      <div class="output-actions">
+        <button class="action-btn" id="playBtn">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          <span id="playLabel">Play</span>
+        </button>
+        <button class="action-btn" id="copyBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copy
+        </button>
+        <button class="action-btn" id="shareBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+          Share
+        </button>
+        <button class="action-btn" id="againBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>
+          Refresh
+        </button>
+      </div>
+    </article>`;
+
+  $('#playBtn').addEventListener('click', ()=>{
+    if (state.speaking) stopSpeaking();
+    else speak(text);
+  });
+  $('#copyBtn').addEventListener('click', async ()=>{
+    try{ await navigator.clipboard.writeText(text); toast('Copied to clipboard'); }
+    catch{ toast('Copy failed'); }
+  });
+  $('#shareBtn').addEventListener('click', async ()=>{
+    const title = `${c.label} of ${place.name}`;
+    if (navigator.share){
+      try{ await navigator.share({ title, text }); }
+      catch{}
+    } else {
+      try{ await navigator.clipboard.writeText(`${title}\n\n${text}`); toast('Copied (no share API)'); }
+      catch{ toast('Share unavailable'); }
+    }
+  });
+  $('#againBtn').addEventListener('click', ()=>{
+    // Force regenerate by clearing this cache entry
+    localStorage.removeItem(cacheKey(place, cat, state.depth));
+    generate();
+  });
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, ch => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[ch]));
+}
+
+/* ---------- Speech ---------- */
+function speak(text){
+  if (!('speechSynthesis' in window)) { toast('Voice not supported on this browser'); return; }
+  stopSpeaking();
+  const u = new SpeechSynthesisUtterance(text);
+  u.rate = state.prefs.voiceRate || 1.0;
+  u.pitch = 1.0;
+  // Pick a pleasant default voice if available
+  const voices = window.speechSynthesis.getVoices();
+  const preferred = voices.find(v => /samantha|karen|moira|fiona|google\s?uk\s?english\s?female|en-US/i.test(v.name)) ||
+                    voices.find(v => /^en/i.test(v.lang));
+  if (preferred) u.voice = preferred;
+  u.onstart = ()=>{ state.speaking = true; setPlayUI(true); };
+  u.onend   = ()=>{ state.speaking = false; setPlayUI(false); };
+  u.onerror = ()=>{ state.speaking = false; setPlayUI(false); };
+  state.speechUtter = u;
+  window.speechSynthesis.speak(u);
+}
+function stopSpeaking(){
+  if (window.speechSynthesis){
+    window.speechSynthesis.cancel();
+  }
+  state.speaking = false;
+  setPlayUI(false);
+}
+function setPlayUI(playing){
+  const btn = $('#playBtn');
+  if (!btn) return;
+  btn.classList.toggle('playing', playing);
+  $('#playLabel').textContent = playing ? 'Stop' : 'Play';
+}
+
+/* ---------- Settings modal ---------- */
+function openSettings(){
+  $('#settingsKeyInput').value = readKey();
+  $('#voiceRate').value = state.prefs.voiceRate || 1.0;
+  $('#voiceRateValue').textContent = (state.prefs.voiceRate||1.0).toFixed(2)+'x';
+  $('#modelSeg').querySelectorAll('button').forEach(b=>{
+    b.classList.toggle('on', b.dataset.model===(state.prefs.modelMode||'auto'));
+  });
+  refreshUsageDisplay();
+  $('#settingsModal').classList.add('show');
+}
+function closeSettings(){ $('#settingsModal').classList.remove('show'); }
+
+function setupSettings(){
+  $('#settingsBtn').addEventListener('click', openSettings);
+  $('#cancelSettingsBtn').addEventListener('click', closeSettings);
+  $('#saveSettingsBtn').addEventListener('click', ()=>{
+    const newKey = $('#settingsKeyInput').value.trim();
+    if (newKey) saveKey(newKey);
+    state.prefs.voiceRate = parseFloat($('#voiceRate').value)||1.0;
+    writePrefs(state.prefs);
+    toast('Settings saved');
+    closeSettings();
+  });
+  $('#voiceRate').addEventListener('input', e=>{
+    $('#voiceRateValue').textContent = parseFloat(e.target.value).toFixed(2)+'x';
+  });
+  $('#modelSeg').addEventListener('click', e=>{
+    const b = e.target.closest('button'); if (!b) return;
+    $('#modelSeg').querySelectorAll('button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');
+    state.prefs.modelMode = b.dataset.model;
+  });
+  $('#resetUsageBtn').addEventListener('click', ()=>{
+    if (confirm('Reset local usage stats? This does not affect billing on Anthropic.')) {
+      localStorage.removeItem(KEY_USAGE);
+      refreshUsageDisplay();
+      toast('Local usage reset');
+    }
+  });
+  $('#clearCacheBtn').addEventListener('click', ()=>{
+    if (confirm('Clear cached stories? You will pay to regenerate them.')){
+      clearCache();
+      refreshUsageDisplay();
+      toast('Cache cleared');
+    }
+  });
+  // Click outside modal closes
+  $('#settingsModal').addEventListener('click', e=>{
+    if (e.target.id==='settingsModal') closeSettings();
+  });
+}
+
+/* ---------- API key modal ---------- */
+function setupKeyModal(){
+  $('#saveKeyBtn').addEventListener('click', ()=>{
+    const v = $('#apiKeyInput').value.trim();
+    if (!v.startsWith('sk-ant')){
+      if (!confirm("That doesn't look like an Anthropic key (sk-ant-…). Save anyway?")) return;
+    }
+    saveKey(v);
+    $('#keyModal').classList.remove('show');
+    toast('Key saved');
+  });
+  $('#apiKeyInput').addEventListener('keydown', e=>{
+    if (e.key==='Enter') $('#saveKeyBtn').click();
+  });
+}
+
+function maybeRequestKey(){
+  if (!readKey()){
+    $('#keyModal').classList.add('show');
+    setTimeout(()=>$('#apiKeyInput').focus(), 300);
+  }
+}
+
+/* ---------- Wire up ---------- */
+function init(){
+  renderCategories();
+  setupToggles();
+  setupSettings();
+  setupKeyModal();
+  $('#locateBtn').addEventListener('click', locate);
+  $('#changePlaceBtn').addEventListener('click', ()=>{
+    state.place=null;
+    $('#localityIdle').style.display='flex';
+    $('#localityFound').style.display='none';
+    refreshGenerateBtn();
+  });
+  $('#generateBtn').addEventListener('click', generate);
+  refreshUsageDisplay();
+  // Some browsers populate voices async
+  if ('speechSynthesis' in window){
+    window.speechSynthesis.onvoiceschanged = ()=>{};
+  }
+  maybeRequestKey();
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

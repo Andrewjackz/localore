@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7DD3FC"/>
+      <stop offset="100%" stop-color="#0284C7"/>
+    </linearGradient>
+    <linearGradient id="pinGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#FEF3C7"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#FACC15" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#FACC15" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Rounded square background -->
+  <rect width="512" height="512" rx="112" ry="112" fill="url(#bg)"/>
+
+  <!-- Sun glow accent -->
+  <circle cx="256" cy="220" r="200" fill="url(#glow)"/>
+
+  <!-- Decorative compass ticks around -->
+  <g stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" opacity="0.55">
+    <line x1="256" y1="60"  x2="256" y2="92"/>
+    <line x1="256" y1="420" x2="256" y2="452"/>
+    <line x1="60"  y1="256" x2="92"  y2="256"/>
+    <line x1="420" y1="256" x2="452" y2="256"/>
+  </g>
+
+  <!-- Pin shape -->
+  <path d="M256 96
+           C 175 96 110 161 110 242
+           C 110 343 256 444 256 444
+           C 256 444 402 343 402 242
+           C 402 161 337 96 256 96 Z"
+        fill="url(#pinGrad)"
+        stroke="#0C4A6E"
+        stroke-width="12"
+        stroke-linejoin="round"/>
+
+  <!-- Inner compass rose -->
+  <g transform="translate(256 232)">
+    <!-- Star points -->
+    <polygon points="0,-72 18,-18 0,0 -18,-18" fill="#0EA5E9"/>
+    <polygon points="0,72 -18,18 0,0 18,18" fill="#0369A1"/>
+    <polygon points="-72,0 -18,-18 0,0 -18,18" fill="#38BDF8"/>
+    <polygon points="72,0 18,18 0,0 18,-18" fill="#FACC15"/>
+    <!-- Center dot -->
+    <circle r="9" fill="#0C4A6E"/>
+    <circle r="3" fill="#FFFFFF"/>
+  </g>
+</svg>
